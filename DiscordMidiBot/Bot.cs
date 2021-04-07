@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
+using DSharpPlus.VoiceNext;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text;
@@ -50,6 +51,8 @@ namespace DiscordMidiBot
 			commands = client.UseCommandsNext(commandsConfig);
 
 			commands.RegisterCommands<Commands>();
+
+			Program.voice = client.UseVoiceNext();
 
 			await client.ConnectAsync();
 

@@ -34,9 +34,39 @@ namespace DiscordMidiBot
 		private static void OnEventReceived(object sender, MidiEventReceivedEventArgs e)
 		{
 			var midiDevice = (MidiDevice)sender;
+			string noteName;
+			string noteIntensity;
 			if (CheckString(e.Event.ToString()))
-			{
+			{			
+				string tempString;
 
+				tempString = e.Event.ToString();
+				tempString = tempString.Replace("Note On [0] (", "");
+				tempString = tempString.Replace(", ", "");
+				tempString = tempString.Replace("(", "");
+				tempString = tempString.Replace(")", "");
+
+				if (tempString.Length == 4)
+				{
+					string tempClone = tempString;
+					noteName = tempString.Substring(0, tempString.Length - 2);
+                    noteIntensity = tempClone.Replace(noteName, "");
+					tempString = tempString.Substring(0, tempString.Length - 2);
+				}
+				else
+				{
+					string tempclone = tempString;
+					noteName = tempString.Substring(0, tempString.Length - 1);
+					noteIntensity = tempclone.Replace(noteName, "");
+					tempString = tempString.Substring(0, tempString.Length - 1);
+				}
+				Console.WriteLine($"Note name: {noteName}");
+				Console.WriteLine($"Note intensity: {noteIntensity}");
+
+				int nameInt = Int32.Parse(noteName);
+				int noteInt = Int32.Parse(noteIntensity);
+
+				NoteTransfer.noteBuffer.Add(new Note(NoteTransfer.noteDict[nameInt], noteInt));
 				Console.WriteLine($"Event received from '{midiDevice.Name}' at {DateTime.Now}: {e.Event}");
 			}
 		}
@@ -47,6 +77,7 @@ namespace DiscordMidiBot
 
 			if (CheckString(e.Event.ToString()))
 			{
+
 				Console.WriteLine($"Event sent to '{midiDevice.Name}' at {DateTime.Now}: {e.Event}");
 			}
 		}

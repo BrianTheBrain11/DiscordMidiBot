@@ -1,5 +1,5 @@
 ﻿using System;
-using DSharpPlus;
+using DSharpPlus.VoiceNext;
 using System.Threading;
 using System.Threading.Tasks;
 using Melanchall.DryWetMidi.Devices;
@@ -7,8 +7,10 @@ using Melanchall.DryWetMidi.Core;
 
 namespace DiscordMidiBot
 {
-	class Program
+	public class Program
 	{
+		public static VoiceNextClient voice;
+
 		static void Main(string[] args)
 		{
 			Console.WriteLine("Program Begun: DisocrdMidiBot");
@@ -40,7 +42,14 @@ namespace DiscordMidiBot
         {
             Console.WriteLine("Starting Midi");
             Midi midi = new Midi();
-            midi.RunAsync().GetAwaiter().GetResult();
+			try
+			{
+				midi.RunAsync().GetAwaiter().GetResult();
+			}
+			catch (Exception e)
+            {
+				Console.WriteLine("There is no midi device connected! Restart the program with the midi connected");
+            }
         }
     }
 }
