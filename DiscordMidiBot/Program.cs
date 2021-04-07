@@ -13,11 +13,13 @@ namespace DiscordMidiBot
 		{
 			Console.WriteLine("Program Begun: DisocrdMidiBot");
 
+			Thread midiThread = new Thread(MidiInitialize.StartMidi);
+			midiThread.Start();
+
 			Thread botThread = new Thread(BotInitialize.StartBot);
 			botThread.Start();
 
-			Thread midiThread = new Thread(MidiInitialize.StartMidi);
-			midiThread.Start();
+
 		}
 	}
 
@@ -25,6 +27,7 @@ namespace DiscordMidiBot
     {
 		public static void StartBot()
         {
+            Console.WriteLine("Starting Bot");
 			Bot bot = new Bot();
 			bot.RunAsync().GetAwaiter().GetResult();
 			Console.ReadKey();
@@ -35,36 +38,9 @@ namespace DiscordMidiBot
     {
 		public static void StartMidi()
         {
-
-        }
-
-		public static void MidiLoop()
-        {
-            using (var outputDevice = OutputDevice.GetByName("MIDI Device"))
-            {
-                outputDevice.EventSent += OnEventSent;
-
-                using (var inputDevice = InputDevice.GetByName("MIDI Device"))
-                {
-                    inputDevice.EventReceived += OnEventReceived;
-                    inputDevice.StartEventsListening();
-
-                    outputDevice.SendEvent(new NoteOnEvent());
-                    outputDevice.SendEvent(new NoteOffEvent());
-                }
-            }
-        }
-
-        private static void OnEventReceived(object sender, MidiEventReceivedEventArgs e)
-        {
-            var midiDevice = (MidiDevice)sender;
-            Console.WriteLine($"Event received from '{midiDevice.Name}' at {DateTime.Now}: {e.Event}");
-        }
-
-        private static void OnEventSent(object sender, MidiEventSentEventArgs e)
-        {
-            var midiDevice = (MidiDevice)sender;
-            Console.WriteLine($"Event sent to '{midiDevice.Name}' at {DateTime.Now}: {e.Event}");
+            Console.WriteLine("Starting Midi");
+            Midi midi = new Midi();
+            midi.RunAsync().GetAwaiter().GetResult();
         }
     }
 }
